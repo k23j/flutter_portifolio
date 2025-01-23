@@ -20,7 +20,7 @@ class PortfolioName extends StatelessWidget {
         child: child,
       ),
       child: Text(
-        'Matheus Passos',
+        'Passos',
         style: Theme.of(context).textTheme.displayLarge!.copyWith(
             color: Theme.of(context).colorScheme.onPrimary,
             fontWeight: FontWeight.bold,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_portifolio/appearance.dart';
 import 'package:flutter_portifolio/main_screen.dart';
-import 'package:flutter_portifolio/main_section.dart';
 
 void main() {
   runApp(const MainApp());
