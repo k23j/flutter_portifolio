@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_portifolio/project_01-board/board_square.dart';
 import 'package:flutter_portifolio/utils/random_color.dart';
 import 'package:flutter_portifolio/utils/vector_2d.dart';
 
-class BoardSquare extends StatefulWidget {
+class BoardSquareWidget extends StatefulWidget {
   final Vector2d id;
   final Function(Vector2d id) onClick;
-  const BoardSquare(
+  const BoardSquareWidget(
     this.id, {
     required this.onClick,
     super.key,
   });
 
   @override
-  State<BoardSquare> createState() => BoardSquareState();
+  State<BoardSquareWidget> createState() => BoardSquareWidgetState();
 }
 
-class BoardSquareState extends State<BoardSquare>
+class BoardSquareWidgetState extends State<BoardSquareWidget>
     with TickerProviderStateMixin {
   bool isActive = false;
   bool isFirstBuild = true;
@@ -98,11 +99,14 @@ class BoardSquareState extends State<BoardSquare>
           ),
           child: AnimatedBuilder(
             animation: _fadeAnimcontroller,
-            builder: (context, child) => Container(
-              decoration: BoxDecoration(
-                color: Color.lerp(
-                    highlightColor, defaultColor, _fadeAnimcontroller.value),
-                borderRadius: BorderRadius.circular(3),
+            builder: (context, child) => ValueListenableBuilder(
+              valueListenable: BoardSquare.borderRadiusNotifier,
+              builder: (context, value, child) => Container(
+                decoration: BoxDecoration(
+                  color: Color.lerp(
+                      highlightColor, defaultColor, _fadeAnimcontroller.value),
+                  borderRadius: BorderRadius.circular(value),
+                ),
               ),
             ),
           ),

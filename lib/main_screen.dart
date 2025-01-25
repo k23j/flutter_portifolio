@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_portifolio/main_section.dart';
 import 'package:flutter_portifolio/left_section/portfolio_name.dart';
-import 'package:flutter_portifolio/project_01_board/board.dart';
+import 'package:flutter_portifolio/project_01-board/board.dart';
+import 'package:flutter_portifolio/project_02-clock/clock_value_notifier.dart';
+import 'package:flutter_portifolio/project_02-clock/clock_widget.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({
@@ -32,6 +34,8 @@ class _MainScreenState extends State<MainScreen>
       end: rightSideWeight / leftSideWeight);
 
   late Animation<double> finalAnim;
+
+  final ClockValueNotifier _clockValueNotifier = ClockValueNotifier();
 
   void setActiveSection(int id) {
     if (id == 1) {
@@ -88,7 +92,8 @@ class _MainScreenState extends State<MainScreen>
             onMouseExit: clearActiveSection,
             backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
             flex: 1000,
-            child: Board(),
+            child: ClockWidget(_clockValueNotifier),
+            // child: Board(),
             // child: Placeholder(),
           ),
         ],

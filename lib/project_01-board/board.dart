@@ -1,7 +1,8 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_portifolio/project_01_board/board_square.dart';
+import 'package:flutter_portifolio/project_01-board/board_options.dart';
+import 'package:flutter_portifolio/project_01-board/board_square_widget.dart';
 import 'package:flutter_portifolio/utils/pair.dart';
 import 'package:flutter_portifolio/utils/vector_2d.dart';
 
@@ -13,9 +14,9 @@ class Board extends StatefulWidget {
 }
 
 class _BoardState extends State<Board> {
-  final int boardSize = 9;
+  final int boardSize = 16;
   late final int itemCount;
-  late final Map<Vector2d, GlobalKey<BoardSquareState>> squareStateMap;
+  late final Map<Vector2d, GlobalKey<BoardSquareWidgetState>> squareStateMap;
   late final List<Widget> squareWidgetList;
   final Duration propagationInterval = Duration(milliseconds: 100);
 
@@ -95,20 +96,16 @@ class _BoardState extends State<Board> {
 
     squareStateMap = {
       for (var vec in vecList)
-        vec: GlobalKey<BoardSquareState>(debugLabel: "Square[$vec]")
+        vec: GlobalKey<BoardSquareWidgetState>(debugLabel: "Square[$vec]")
     };
 
     squareWidgetList = vecList
-        .map((vec) => BoardSquare(
+        .map((vec) => BoardSquareWidget(
               vec,
               onClick: (id) => propagate(id, 0),
               key: squareStateMap[vec],
             ))
         .toList();
-
-    //DEBUG
-    print(squareStateMap);
-    print(squareWidgetList);
   }
 
   Vector2d indexToVector2d(int id) {
@@ -118,19 +115,28 @@ class _BoardState extends State<Board> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: SizedBox(
-        width: 400,
-        height: 400,
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: boardSize,
-              childAspectRatio: 1.0,
-              crossAxisSpacing: 2,
-              mainAxisSpacing: 2),
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: itemCount,
-          itemBuilder: (context, index) => squareWidgetList[index],
-        ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: 400,
+            height: 400,
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: boardSize,
+                  childAspectRatio: 1.0,
+                  crossAxisSpacing: 2,
+                  mainAxisSpacing: 2),
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: itemCount,
+              itemBuilder: (context, index) => squareWidgetList[index],
+            ),
+          ),
+          SizedBox(
+            width: 16,
+          ),
+          SizedBox(width: 200, height: 400, child: BoardOptions()),
+        ],
       ),
     );
   }
