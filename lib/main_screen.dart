@@ -20,6 +20,8 @@ class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin {
   int activeSection = -1;
   final double activeSectionWidthFactor = .6;
+
+  final PageController _pageController = PageController(initialPage: 0);
   //1000 milliseconds == 1 second
   // final Duration animDuration = Duration(milliseconds: 300);
 
@@ -64,6 +66,12 @@ class _MainScreenState extends State<MainScreen>
   }
 
   @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Row(
@@ -92,7 +100,20 @@ class _MainScreenState extends State<MainScreen>
             onMouseExit: clearActiveSection,
             backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
             flex: 1000,
-            child: ClockWidget(_clockValueNotifier),
+            child: Scrollbar(
+              controller: _pageController,
+              thumbVisibility: true,
+              child: PageView(
+                scrollDirection: Axis.vertical,
+                pageSnapping: false,
+                controller: _pageController,
+                children: [
+                  Board(),
+                  ClockWidget(_clockValueNotifier),
+                ],
+              ),
+            ),
+            // child: ClockWidget(_clockValueNotifier),
             // child: Board(),
             // child: Placeholder(),
           ),

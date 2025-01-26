@@ -13,7 +13,10 @@ class Board extends StatefulWidget {
   State<Board> createState() => _BoardState();
 }
 
-class _BoardState extends State<Board> {
+class _BoardState extends State<Board> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   final int boardSize = 16;
   late final int itemCount;
   late final Map<Vector2d, GlobalKey<BoardSquareWidgetState>> squareStateMap;
