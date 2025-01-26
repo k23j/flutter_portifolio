@@ -58,6 +58,30 @@ class _MainScreenState extends State<MainScreen>
     });
   }
 
+  int _numOfPages = 0;
+  final Duration nextPageAnimDuration = Duration(milliseconds: 300);
+  final Curve nextPageAnimCurve = Curves.easeInOut;
+  void viewNextProject() {
+    _pageController.nextPage(
+        duration: nextPageAnimDuration, curve: nextPageAnimCurve);
+    onPageChange(_pageController.page!.floor() + 1);
+  }
+
+  void viewPreviusProject() {
+    _pageController.previousPage(
+        duration: nextPageAnimDuration, curve: nextPageAnimCurve);
+    onPageChange(_pageController.page!.round() - 1);
+  }
+
+  bool _isOnLastPage = false;
+  bool _isOnFirstPage = true;
+  void onPageChange(int changeTo) {
+    setState(() {
+      _isOnFirstPage = changeTo == 0;
+      _isOnLastPage = changeTo == _numOfPages - 1;
+    });
+  }
+
   @override
   void initState() {
     _animController.value = .5;
@@ -73,6 +97,13 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> projectWidgetList = [
+      Board(),
+      ClockWidget(_clockValueNotifier),
+    ];
+
+    _numOfPages = projectWidgetList.length;
+
     return Scaffold(
       body: Row(
         children: [
@@ -100,18 +131,50 @@ class _MainScreenState extends State<MainScreen>
             onMouseExit: clearActiveSection,
             backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
             flex: 1000,
-            child: Scrollbar(
-              controller: _pageController,
-              thumbVisibility: true,
-              child: PageView(
-                scrollDirection: Axis.vertical,
-                pageSnapping: false,
-                controller: _pageController,
-                children: [
-                  Board(),
-                  ClockWidget(_clockValueNotifier),
-                ],
-              ),
+            child: Stack(
+              children: [
+                PageView(
+                  scrollDirection: Axis.vertical,
+                  physics: NeverScrollableScrollPhysics(),
+                  pageSnapping: false,
+                  controller: _pageController,
+                  children: projectWidgetList,
+                ),
+                Positioned(
+                  bottom: 16,
+                  right: 16,
+                  child: Row(
+                    children: [
+                      //Go to previus page
+                      Opacity(
+                        opacity: _isOnFirstPage ? .5 : 1,
+                        child: FloatingActionButton(
+                          onPressed:
+                              (_isOnFirstPage) ? null : viewPreviusProject,
+                          child: Icon(
+                            Icons.arrow_upward,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      //Go to next page
+                      Opacity(
+                        opacity: _isOnLastPage ? .5 : 1,
+                        child: FloatingActionButton(
+                          onPressed: (_isOnLastPage) ? null : viewNextProject,
+                          child: Icon(
+                            Icons.arrow_downward,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
             // child: ClockWidget(_clockValueNotifier),
             // child: Board(),

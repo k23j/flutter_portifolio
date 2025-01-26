@@ -71,6 +71,7 @@ class ClockWidget extends StatelessWidget {
                   dateTimeToTurnFraction: secondsToTurnFraction,
                   height: 225,
                   color: Colors.red,
+                  animCurve: Curves.elasticInOut,
                 ),
 
                 ClockMiddlePin(),

@@ -8,6 +8,9 @@ class ClockHandWidget extends StatelessWidget {
   final double height;
   final Color color;
 
+  final Curve? animCurve;
+  static final Curve curve = Curves.easeInOut;
+
   final Widget? child;
 
   const ClockHandWidget({
@@ -17,19 +20,19 @@ class ClockHandWidget extends StatelessWidget {
     this.width = 10,
     this.height = 250,
     this.color = Colors.black,
+    this.animCurve,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     final Duration animDuration = Duration(milliseconds: 250);
-    final Curve curve = Curves.elasticInOut;
     return ValueListenableBuilder(
       valueListenable: notifier,
       builder: (context, value, child) {
         return AnimatedRotation(
           turns: value,
-          curve: curve,
+          curve: animCurve ?? curve,
           duration: animDuration,
           child: SizedBox(
             width: height * 1.8,

@@ -11,7 +11,10 @@ class ClockOptions extends StatefulWidget {
   State<ClockOptions> createState() => _ClockOptionsState();
 }
 
-class _ClockOptionsState extends State<ClockOptions> {
+class _ClockOptionsState extends State<ClockOptions>
+    with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
   int clockSpeedIndex = 2;
   List<double> clockSpeedList = [.25, .5, 1, 2, 5];
   double get selectedSpeed => clockSpeedList[clockSpeedIndex];
@@ -19,12 +22,16 @@ class _ClockOptionsState extends State<ClockOptions> {
   void onSpeedChange(int id) {
     setState(() {
       clockSpeedIndex = id;
-      widget.clockNotifier.clockSpeed = selectedSpeed;
     });
+  }
+
+  void onSpeedChangeEnd(int id) {
+    widget.clockNotifier.clockSpeed = selectedSpeed;
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -40,6 +47,7 @@ class _ClockOptionsState extends State<ClockOptions> {
             thumbColor: Theme.of(context).colorScheme.onPrimary,
             value: clockSpeedIndex.toDouble(),
             onChanged: (value) => onSpeedChange(value.truncate()),
+            onChangeEnd: (value) => onSpeedChangeEnd(value.truncate()),
             min: 0,
             max: clockSpeedList.length - 1,
           ),

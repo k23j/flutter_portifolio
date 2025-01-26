@@ -117,6 +117,7 @@ class _BoardState extends State<Board> with AutomaticKeepAliveClientMixin {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Center(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
