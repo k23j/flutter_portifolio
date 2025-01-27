@@ -1,11 +1,14 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_portifolio/commom/page_title_widget.dart';
+import 'package:flutter_portifolio/commom/project_widget.dart';
 import 'package:flutter_portifolio/main_section.dart';
 import 'package:flutter_portifolio/left_section/portfolio_name.dart';
 import 'package:flutter_portifolio/project_01-board/board.dart';
 import 'package:flutter_portifolio/project_02-clock/clock_value_notifier.dart';
 import 'package:flutter_portifolio/project_02-clock/clock_widget.dart';
+import 'package:flutter_portifolio/sidebar.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({
@@ -18,6 +21,12 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin {
+  late final List<ProjectWidget> projectWidgetList = [
+    ProjectWidget("Wave Board", (context) => Board()),
+    ProjectWidget(
+        "Analog Clock", (context) => ClockWidget(_clockValueNotifier)),
+  ];
+
   int activeSection = -1;
   final double activeSectionWidthFactor = .6;
 
@@ -59,8 +68,10 @@ class _MainScreenState extends State<MainScreen>
   }
 
   int _numOfPages = 0;
+  int currentPage = 0;
   final Duration nextPageAnimDuration = Duration(milliseconds: 300);
   final Curve nextPageAnimCurve = Curves.easeInOut;
+
   void viewNextProject() {
     _pageController.nextPage(
         duration: nextPageAnimDuration, curve: nextPageAnimCurve);
@@ -73,10 +84,21 @@ class _MainScreenState extends State<MainScreen>
     onPageChange(_pageController.page!.round() - 1);
   }
 
+  void changeToProject(int index) {
+    // _pageController.jumpToPage(index);
+    _pageController.animateToPage(index,
+        duration: nextPageAnimDuration, curve: nextPageAnimCurve);
+    onPageChange(index);
+    // _pageController.animateTo(index.toDouble(),
+    //     duration: nextPageAnimDuration, curve: nextPageAnimCurve);
+    // onPageChange(index);
+  }
+
   bool _isOnLastPage = false;
   bool _isOnFirstPage = true;
   void onPageChange(int changeTo) {
     setState(() {
+      currentPage = changeTo;
       _isOnFirstPage = changeTo == 0;
       _isOnLastPage = changeTo == _numOfPages - 1;
     });
@@ -85,6 +107,7 @@ class _MainScreenState extends State<MainScreen>
   @override
   void initState() {
     _animController.value = .5;
+    _numOfPages = projectWidgetList.length;
     finalAnim = tween.animate(_animController);
     super.initState();
   }
@@ -97,13 +120,6 @@ class _MainScreenState extends State<MainScreen>
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> projectWidgetList = [
-      Board(),
-      ClockWidget(_clockValueNotifier),
-    ];
-
-    _numOfPages = projectWidgetList.length;
-
     return Scaffold(
       body: Row(
         children: [
@@ -138,7 +154,20 @@ class _MainScreenState extends State<MainScreen>
                   physics: NeverScrollableScrollPhysics(),
                   pageSnapping: false,
                   controller: _pageController,
-                  children: projectWidgetList,
+                  children:
+                      projectWidgetList.map((e) => e.builder(context)).toList(),
+                ),
+                Positioned(
+                    top: 16,
+                    left: 16,
+                    child:
+                        PageTitleWidget(projectWidgetList[currentPage].title)),
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Sidebar(currentPage,
+                      projectWidgetList.map((e) => e.title).toList(),
+                      onChangePage: changeToProject),
                 ),
                 Positioned(
                   bottom: 16,
