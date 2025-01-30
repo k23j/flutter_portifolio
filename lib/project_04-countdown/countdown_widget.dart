@@ -13,14 +13,24 @@ class CountdownWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final CountdownNotifier notifier = CountdownNotifier(target);
+    final Color backgroundColor =
+        Theme.of(context).colorScheme.primaryContainer;
     return Center(
       child: Container(
         padding: EdgeInsets.all(12),
-        width: 550,
-        height: 400,
+        clipBehavior: Clip.hardEdge,
+        width: 700,
+        height: 500,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: Theme.of(context).colorScheme.primaryContainer),
+          borderRadius: BorderRadius.circular(12),
+          gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.topLeft,
+              colors: [
+                backgroundColor,
+                Color.lerp(backgroundColor, Colors.black, .3)!,
+              ]),
+        ),
         child: ValueListenableBuilder(
           valueListenable: notifier.durationNotifier,
           builder: (context, value, child) {
@@ -31,6 +41,29 @@ class CountdownWidget extends StatelessWidget {
 
             return Stack(
               children: [
+                Positioned(
+                  left: 32,
+                  top: 32,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Formatura \nC-Esp-HabSG',
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineMedium!
+                              .copyWith(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600)),
+                      Text('05/06/2025',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium!
+                              .copyWith(
+                                  color: Colors.white.withValues(alpha: .6),
+                                  fontWeight: FontWeight.w500)),
+                    ],
+                  ),
+                ),
                 Positioned(
                   left: 32,
                   top: 0,
@@ -46,6 +79,18 @@ class CountdownWidget extends StatelessWidget {
                     ],
                   ),
                 ),
+                Positioned(
+                    top: 0,
+                    bottom: 0,
+                    right: 250,
+                    child: Transform.scale(
+                      scaleX: 1.5,
+                      child: Icon(
+                        Icons.trending_flat,
+                        color: Colors.deepOrange,
+                        size: 40,
+                      ),
+                    )),
                 CountdownSideClock(notifier.tickCountNotifier),
               ],
             );
@@ -64,8 +109,8 @@ class CountdownSideClock extends StatelessWidget {
     super.key,
   });
 
-  final int qnt = 128;
-  final double size = 2000;
+  final int qnt = 64;
+  final double size = 1300;
   double get angle => 360.0 / qnt;
   double get angleInTurns => 1.0 / qnt;
 
@@ -80,8 +125,8 @@ class CountdownSideClock extends StatelessWidget {
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12)),
-                width: index == 0 ? 5 : 3,
-                height: index == 0 ? 40 : 35,
+                width: 2,
+                height: 35,
               ),
             ))).toList();
   }
@@ -92,27 +137,48 @@ class CountdownSideClock extends StatelessWidget {
     final Duration duration = Duration(milliseconds: 500);
     final Curve curve = Curves.elasticInOut;
     return OverflowBox(
-      maxWidth: double.infinity, // Allow it to be as wide as needed
-      maxHeight: double.infinity, // Allow it to be as tall as needed
+      maxWidth: double.infinity,
+      maxHeight: double.infinity,
       alignment: Alignment.centerRight,
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: Transform.translate(
-          offset: Offset(size - 250, 0),
-          child: ValueListenableBuilder(
-            valueListenable: notifier,
-            builder: (context, value, child) => AnimatedRotation(
-                duration: duration,
-                curve: curve,
-                turns: angleInTurns * value * -1,
-                child: child),
-            child: Stack(
-              alignment: Alignment.center,
-              clipBehavior: Clip.hardEdge, // Ensure nothing gets clipped
-              children: makerList,
+      child: Transform.translate(
+        offset: Offset(size - 250, 0),
+        child: Stack(
+          children: [
+            Transform.scale(
+              scale: .95,
+              child: Opacity(
+                opacity: .4,
+                child: Container(
+                  width: size,
+                  height: size,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(colors: [
+                      Colors.black,
+                      Colors.black.withValues(alpha: .5)
+                    ]),
+                  ),
+                ),
+              ),
             ),
-          ),
+            SizedBox(
+              width: size,
+              height: size,
+              child: ValueListenableBuilder(
+                valueListenable: notifier,
+                builder: (context, value, child) => AnimatedRotation(
+                    duration: duration,
+                    curve: curve,
+                    turns: angleInTurns * value * -1,
+                    child: child),
+                child: Stack(
+                  alignment: Alignment.center,
+                  // clipBehavior: Clip.hardEdge, // Ensure nothing gets clipped
+                  children: makerList,
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
@@ -145,7 +211,7 @@ class CountdownRemainingText extends StatelessWidget {
                   .copyWith(color: Colors.white, fontWeight: FontWeight.w600)),
           Text(title,
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Colors.white.withValues(alpha: .8),
+                  color: Colors.white.withValues(alpha: .6),
                   fontWeight: FontWeight.w500)),
         ],
       ),
