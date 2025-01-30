@@ -11,11 +11,8 @@ class ClockOptions extends StatefulWidget {
   State<ClockOptions> createState() => _ClockOptionsState();
 }
 
-class _ClockOptionsState extends State<ClockOptions>
-    with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-  int clockSpeedIndex = 2;
+class _ClockOptionsState extends State<ClockOptions> {
+  late int clockSpeedIndex;
   List<double> clockSpeedList = [.25, .5, 1, 2, 5];
   double get selectedSpeed => clockSpeedList[clockSpeedIndex];
 
@@ -29,9 +26,21 @@ class _ClockOptionsState extends State<ClockOptions>
     widget.clockNotifier.clockSpeed = selectedSpeed;
   }
 
+  void resetClock() {
+    setState(() {
+      clockSpeedIndex = clockSpeedList.indexOf(widget.clockNotifier.clockSpeed);
+    });
+    widget.clockNotifier.resetClock();
+  }
+
+  @override
+  void initState() {
+    clockSpeedIndex = clockSpeedList.indexOf(widget.clockNotifier.clockSpeed);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -52,6 +61,14 @@ class _ClockOptionsState extends State<ClockOptions>
             max: clockSpeedList.length - 1,
           ),
         ),
+        GestureDetector(
+          onTap: resetClock,
+          child: Container(
+            width: 50,
+            height: 50,
+            color: Colors.red,
+          ),
+        )
       ],
     );
   }

@@ -23,32 +23,29 @@ class Sidebar extends StatelessWidget {
       child: ListView.builder(
         shrinkWrap: true,
         itemCount: pageTitleList.length,
-        itemBuilder: (context, index) {
-          final Widget text = Text(
-            pageTitleList[index],
-            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: isCurrentPage(index)
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.onSecondary,
-                fontWeight: FontWeight.bold),
-          );
-          return Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(
-              onPressed: () => onChangePage(index),
-              child: isCurrentPage(index)
-                  ? Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(4),
-                          color:
-                              Theme.of(context).colorScheme.primaryContainer),
-                      child: text,
-                    )
-                  : text,
+        itemBuilder: (context, index) => Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(
+            onPressed: () => onChangePage(index),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: isCurrentPage(index)
+                  ? BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: Theme.of(context).colorScheme.primaryContainer)
+                  : null,
+              child: Text(
+                pageTitleList[index],
+                textAlign: TextAlign.end,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                    color: isCurrentPage(index)
+                        ? Theme.of(context).colorScheme.onPrimary
+                        : Theme.of(context).colorScheme.onSecondary,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

@@ -6,11 +6,13 @@ class ClockValueNotifier {
   double _clockSpeed = 1;
   set clockSpeed(double value) {
     _clockSpeed = value;
-    startTimer();
+    _startTimer();
   }
 
+  double get clockSpeed => _clockSpeed;
+
   ClockValueNotifier() {
-    init();
+    _init();
   }
 
   final Duration _interval = Duration(milliseconds: 1000);
@@ -22,14 +24,11 @@ class ClockValueNotifier {
   late final double _minuteTickTurnValue = 1 / (60 * 60);
   late final double _hourTickTurnValue = 1 / (12 * 60 * 60);
 
-  late final ValueNotifier<double> secondsTurnNotifier =
-      ValueNotifier<double>(_secondsStartRot);
+  late ValueNotifier<double> secondsTurnNotifier;
 
-  late final ValueNotifier<double> minutesTurnNotifier =
-      ValueNotifier<double>(_minutesStartRot);
+  late ValueNotifier<double> minutesTurnNotifier;
 
-  late final ValueNotifier<double> hoursTurnNotifier =
-      ValueNotifier<double>(_hoursStartRot);
+  late ValueNotifier<double> hoursTurnNotifier;
 
   double get _secondsStartRot {
     return _startDateTime.second * _secondTickTurnValue;
@@ -47,19 +46,31 @@ class ClockValueNotifier {
     return totalSeconds * _hourTickTurnValue;
   }
 
-  void init() async {
-    startTimer();
+  void _init() async {
+    _setValues();
+    clockSpeed = 1;
+    _startTimer();
   }
 
-  void startTimer() {
+  void _setValues() {
+    secondsTurnNotifier = ValueNotifier<double>(_secondsStartRot);
+
+    minutesTurnNotifier = ValueNotifier<double>(_minutesStartRot);
+
+    hoursTurnNotifier = ValueNotifier<double>(_hoursStartRot);
+  }
+
+  void _startTimer() {
     _timer?.cancel();
     _timer = Timer.periodic(
       Duration(milliseconds: (_interval.inMilliseconds / _clockSpeed).round()),
-      (timer) => clockTick(),
+      (timer) => _clockTick(),
     );
   }
 
-  void clockTick() {
+  void resetClock() => _init();
+
+  void _clockTick() {
     secondsTurnNotifier.value += _secondTickTurnValue;
     minutesTurnNotifier.value += _minuteTickTurnValue;
     hoursTurnNotifier.value += _hourTickTurnValue;

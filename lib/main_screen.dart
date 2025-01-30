@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_portifolio/commom/page_title_widget.dart';
 import 'package:flutter_portifolio/commom/project_widget.dart';
@@ -8,6 +6,8 @@ import 'package:flutter_portifolio/left_section/portfolio_name.dart';
 import 'package:flutter_portifolio/project_01-board/board.dart';
 import 'package:flutter_portifolio/project_02-clock/clock_value_notifier.dart';
 import 'package:flutter_portifolio/project_02-clock/clock_widget.dart';
+import 'package:flutter_portifolio/project_03-password_generator/password_generator.dart';
+import 'package:flutter_portifolio/project_04-countdown/countdown_screen.dart';
 import 'package:flutter_portifolio/sidebar.dart';
 
 class MainScreen extends StatefulWidget {
@@ -22,6 +22,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen>
     with SingleTickerProviderStateMixin {
   late final List<ProjectWidget> projectWidgetList = [
+    ProjectWidget("Countdown", (context) => CountdownScreen()),
+    ProjectWidget("Password Generator", (context) => PasswordGenerator()),
     ProjectWidget("Wave Board", (context) => Board()),
     ProjectWidget(
         "Analog Clock", (context) => ClockWidget(_clockValueNotifier)),
@@ -149,13 +151,13 @@ class _MainScreenState extends State<MainScreen>
             flex: 1000,
             child: Stack(
               children: [
-                PageView(
+                PageView.builder(
+                  itemBuilder: (context, index) =>
+                      projectWidgetList[index].builder(context),
                   scrollDirection: Axis.vertical,
                   physics: NeverScrollableScrollPhysics(),
                   pageSnapping: false,
                   controller: _pageController,
-                  children:
-                      projectWidgetList.map((e) => e.builder(context)).toList(),
                 ),
                 Positioned(
                     top: 16,
